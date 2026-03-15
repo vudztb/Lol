@@ -1,4 +1,4 @@
--- @tiktokacckhoe1
+-- @zay363636
 
 if not game:IsLoaded() then game.Loaded:Wait() end
 repeat task.wait() until game.Players.LocalPlayer
@@ -32,8 +32,8 @@ local StatusLabel = Instance.new("TextLabel")
 local UIPadding = Instance.new("UIPadding")
 local UIListLayout = Instance.new("UIListLayout")
 
-ScreenGui.Name = "NejiFindFruits"
-if CoreGui:FindFirstChild("NejiFindFruits") then
+ScreenGui.Name = "ZayFindFruits"
+if CoreGui:FindFirstChild("ZayFindFruits") then
     CoreGui.NejiFindFruits:Destroy()
 end
 if gethui then
@@ -77,7 +77,7 @@ TitleLabel.Parent = MainFrame
 TitleLabel.BackgroundTransparency = 1.000
 TitleLabel.Size = UDim2.new(1, 0, 0, 60)
 TitleLabel.Font = Enum.Font.FredokaOne
-TitleLabel.Text = "NEJI Hub - Finder Fruits"
+TitleLabel.Text = "Zay Hub - Finder Fruits"
 TitleLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
 TitleLabel.TextSize = 50
 TitleLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
@@ -100,7 +100,7 @@ InfoLabel.Parent = MainFrame
 InfoLabel.BackgroundTransparency = 1.000
 InfoLabel.Size = UDim2.new(1, 0, 0, 35)
 InfoLabel.Font = Enum.Font.GothamBold
-InfoLabel.Text = "Tiktok: @tiktokacckhoe1"
+InfoLabel.Text = "Tiktok: @zay363636"
 InfoLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 InfoLabel.TextSize = 22
 InfoLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
@@ -395,4 +395,3 @@ task.spawn(function()
         end
     end)
 end)
-đổi @tiktokacckhoe1 thành @zay363636 vs cả đổi NEJI thành ZAY 
