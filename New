@@ -1,0 +1,192 @@
+-- ZAY FULL FARM FINAL (ANTI WATER + NO RANDOM)
+
+if not game:IsLoaded() then game.Loaded:Wait() end
+repeat task.wait() until game.Players.LocalPlayer
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+
+local player = Players.LocalPlayer
+
+-- AUTO MARINES
+task.spawn(function()
+	while player.Team == nil or player.Team.Name == "Neutral" do
+		pcall(function()
+			ReplicatedStorage.Remotes.CommF_:InvokeServer("SetTeam","Marines")
+		end)
+		task.wait(1)
+	end
+end)
+
+-- UI
+if CoreGui:FindFirstChild("ZayFarm") then
+	CoreGui.ZayFarm:Destroy()
+end
+
+local gui = Instance.new("ScreenGui", CoreGui)
+gui.Name = "ZayFarm"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0,200,0,80)
+frame.Position = UDim2.new(0,20,0.4,0)
+frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame)
+
+local text = Instance.new("TextLabel", frame)
+text.Size = UDim2.new(1,0,1,0)
+text.BackgroundTransparency = 1
+text.TextColor3 = Color3.new(1,1,1)
+text.TextScaled = true
+text.Text = "Đang chạy..."
+
+-- noclip + anti sit + anti water
+RunService.Stepped:Connect(function()
+	local char = player.Character
+	if char then
+		for _,v in pairs(char:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.CanCollide = false
+			end
+		end
+		
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then
+			hum.Sit = false
+			hum:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+		end
+		
+		local hrp = char:FindFirstChild("HumanoidRootPart")
+		if hrp then
+			if hrp.Position.Y < 20 then
+				hrp.CFrame = hrp.CFrame + Vector3.new(0, 25, 0)
+			end
+		end
+	end
+end)
+
+-- HRP
+local function GetHRP()
+	local char = player.Character or player.CharacterAdded:Wait()
+	return char:WaitForChild("HumanoidRootPart")
+end
+
+-- bay
+local function TweenTo(cf)
+	local hrp = GetHRP()
+	local dist = (hrp.Position - cf.Position).Magnitude
+	local tween = TweenService:Create(hrp, TweenInfo.new(dist/350, Enum.EasingStyle.Linear), {CFrame = cf})
+	tween:Play()
+	tween.Completed:Wait()
+end
+
+-- lưu trái
+local function StoreFruit(tool)
+	local name = tool:GetAttribute("OriginalName") or tool.Name
+	
+	local char = player.Character
+	local hum = char and char:FindFirstChildOfClass("Humanoid")
+
+	if hum then
+		hum:EquipTool(tool)
+		task.wait(0.2)
+	end
+
+	pcall(function()
+		ReplicatedStorage.Remotes.CommF_:InvokeServer("StoreFruit", name, tool)
+	end)
+end
+
+-- auto store
+task.spawn(function()
+	while true do
+		task.wait(1)
+
+		local char = player.Character
+
+		for _,tool in pairs(player.Backpack:GetChildren()) do
+			if string.find(tool.Name,"Fruit") then
+				text.Text = "Đang lưu: "..tool.Name
+				StoreFruit(tool)
+			end
+		end
+
+		if char then
+			for _,tool in pairs(char:GetChildren()) do
+				if string.find(tool.Name,"Fruit") then
+					text.Text = "Đang lưu: "..tool.Name
+					StoreFruit(tool)
+				end
+			end
+		end
+	end
+end)
+
+-- hop server
+local function Hop()
+	local PlaceID = game.PlaceId
+	local servers = {}
+
+	local suc, res = pcall(function()
+		return HttpService:JSONDecode(game:HttpGet(
+			"https://games.roblox.com/v1/games/"..PlaceID.."/servers/Public?sortOrder=Asc&limit=100"
+		))
+	end)
+
+	if suc and res then
+		for _,v in pairs(res.data) do
+			if v.playing < v.maxPlayers and v.id ~= game.JobId then
+				table.insert(servers, v.id)
+			end
+		end
+	end
+
+	if #servers > 0 then
+		TeleportService:TeleportToPlaceInstance(PlaceID, servers[math.random(1,#servers)], player)
+	end
+end
+
+-- MAIN
+while true do
+	task.wait(1)
+
+	local fruits = {}
+
+	for _,v in pairs(Workspace:GetChildren()) do
+		if (v:IsA("Tool") or v:IsA("Model")) and string.find(v.Name, "Fruit") then
+			if v:FindFirstChild("Handle") then
+				table.insert(fruits, v)
+			end
+		end
+	end
+
+	if #fruits > 0 then
+		for _,fruit in pairs(fruits) do
+			
+			if fruit and fruit.Parent == Workspace then
+				text.Text = "Đang lấy: "..fruit.Name
+				
+				local handle = fruit:FindFirstChild("Handle")
+				if handle then
+					TweenTo(handle.CFrame)
+
+					for i=1,10 do
+						GetHRP().CFrame = handle.CFrame
+						task.wait()
+					end
+				end
+			end
+		end
+	else
+		text.Text = "Hết trái → hop"
+		task.wait(1)
+		Hop()
+	end
+end
