@@ -1,4 +1,4 @@
--- ZAY FULL FARM FINAL (ANTI WATER + NO RANDOM)
+-- ZAY FARM FINAL (NO ANTI WATER)
 
 if not game:IsLoaded() then game.Loaded:Wait() end
 repeat task.wait() until game.Players.LocalPlayer
@@ -47,7 +47,7 @@ text.TextColor3 = Color3.new(1,1,1)
 text.TextScaled = true
 text.Text = "Đang chạy..."
 
--- noclip + anti sit + anti water
+-- noclip + anti sit
 RunService.Stepped:Connect(function()
 	local char = player.Character
 	if char then
@@ -61,13 +61,6 @@ RunService.Stepped:Connect(function()
 		if hum then
 			hum.Sit = false
 			hum:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-		end
-		
-		local hrp = char:FindFirstChild("HumanoidRootPart")
-		if hrp then
-			if hrp.Position.Y < 20 then
-				hrp.CFrame = hrp.CFrame + Vector3.new(0, 25, 0)
-			end
 		end
 	end
 end)
